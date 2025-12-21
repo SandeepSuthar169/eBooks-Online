@@ -62,3 +62,11 @@ export const BooksStatusEnum = {
 }
 
 export const AvaailableBooksStatus = Object.values(BooksStatusEnum)
+
+export const AddressTypeEnum = {
+    HOME: "home",
+    WORK: "work",
+    OTHER: "other" 
+}
+
+export const AvaailableAddressType = Object.values(AddressTypeEnum)
