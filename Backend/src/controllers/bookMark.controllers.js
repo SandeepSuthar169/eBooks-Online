@@ -5,7 +5,6 @@ import { BookMark } from "../models/bookMark.model.js";
 import { ApiError } from "../utils/apiError.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
-import { registerUser } from "./auth.controllers.js";
 
 const addToBookMark = asyncHandler(async(req, res) => {
     try {
@@ -44,13 +43,25 @@ const addToBookMark = asyncHandler(async(req, res) => {
     
 })
 
-const removeToBookMark = asyncHandler(async(req, res) => {
-    try {
-        
-    } catch (error) {
-        
+const removeToBookMark = asyncHandler(async (req, res) => {
+    const { bookMarkId } = req.params;
+
+    if (!bookMarkId) {
+        throw new ApiError(400, "Bookmark ID is required");
     }
-})
+
+    const removedBookmark = await BookMark.findByIdAndDelete(bookMarkId);
+
+    if (!removedBookmark) {
+        throw new ApiError(404, "Bookmark not found");
+    }
+
+    res.status(200).json({
+        success: true,
+        message: "Bookmark removed successfully",
+        data: removedBookmark
+    });
+});
 
 export {
     addToBookMark,
