@@ -3,11 +3,11 @@ import mongoose, { Schema } from "mongoose";
 
 const bookMarkSchema = new Schema(
     {
-        user: {
-            type: mongoose.Types.ObjectId,
-            ref: "User",
-            required: true
-        },
+        // user: {
+        //     type: mongoose.Types.ObjectId,
+        //     ref: "User",
+        //     required: true
+        // },
         book: {
             type: mongoose.Types.ObjectId,
             ref: "Books",

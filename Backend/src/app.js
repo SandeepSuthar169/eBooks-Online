@@ -5,6 +5,7 @@ import booksRoute  from "./routes/book.routes.js"
 import authRoute from "./routes/auth.routes.js"
 import reviewRoute from "./routes/review.routes.js"
 import orderRoute from "./routes/order.routes.js"
+import bookMarkRoute from "./routes/bookMark.routes.js"
 
 
 const app = express()
@@ -27,5 +28,6 @@ app.use("/api/v1/auth", authRoute)
 app.use("/api/v1/Books", booksRoute)
 app.use("/api/v1/review", reviewRoute)
 app.use("/api/v1/order", orderRoute)
+app.use("/api/v1/bookMark", bookMarkRoute)
 
 export default app
