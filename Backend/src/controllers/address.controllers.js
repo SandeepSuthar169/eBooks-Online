@@ -40,18 +40,6 @@ export const createUserAddress = asyncHandler(async(req, res) => {
         !isDefault  == undefined
     ) throw new ApiError(400, "user address is required details")
 
-    // const existedAddress = Address.findOne({
-    //     $or: [
-    //         {
-    //             address1
-    //         },
-    //         {
-    //             address2
-    //         }
-    //     ]
-        
-    // })
-    // if(existedAddress) throw new ApiError(401, "address already exist")
 
     const address = await Address.create({
         fullName,
@@ -74,5 +62,74 @@ export const createUserAddress = asyncHandler(async(req, res) => {
         address,
         "address create successfully"
     ))
+
+})
+
+
+export const getAllUserAddress = asyncHandler(async(req, res) => {
+    const address = await Address.aggregate([
+        {
+            $match: {
+                owner: req.user._id,
+            }
+        },
+        {
+            $lookup: {
+                from: "users",
+                localField: "owner",
+                foreignField: "_id",
+                as: "owner"
+            }
+        },
+        {
+            $unwind: {
+                path: "$owner",
+                preserveNullAndEmptyArrays: true
+            }
+        },
+        {
+            $project: {
+                fullName: 1,
+                phoneNumber: 1,
+                address1: 1,
+                address2: 1,
+                city: 1,
+                state: 1,
+                pineCode: 1,
+                country: 1,
+                addressType: 1
+            }
+        }
+    ])
+    if(!address || address.length == 0 ) throw new ApiError(404, "address is required")
+
+    return res.status(200).json(
+        new ApiResponse(200,
+            address,
+            "address fetched successfully"
+        )
+    )
+})
+
+
+
+export const  getAddressById = asyncHandler(async(req, res) => {
+    const { addressId } = req.params
+    if(!addressId) throw new ApiError(401, "addressId create to faild")
+    
+    const address = await Address.findOne({
+        _id: addressId,
+        owner: req.user._id,
+    })
+    if(!address) throw new ApiError(401, "address doew not exist")
+    
+    return res.status(200).json(
+        new ApiResponse(200,
+            address,
+            "address fetchech successfully"
+        ) 
+    )
+
+
 
 })
