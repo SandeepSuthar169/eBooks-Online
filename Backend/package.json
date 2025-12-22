@@ -24,7 +24,8 @@
     "jsonwebtoken": "^7.4.3",
     "mongoose": "^8.19.4",
     "mongooses": "^1.0.0",
-    "npm": "^11.6.2"
+    "npm": "^11.6.2",
+    "razorpay": "^2.9.6"
   },
   "devDependencies": {
     "prettier": "^3.6.2"

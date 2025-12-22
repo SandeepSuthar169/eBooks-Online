@@ -24,10 +24,14 @@ const orderSchema = new Schema(
             ref: "Books",
             required: true
         },
-        user: {
+        owner: {
             type: Schema.Types.ObjectId,
             ref: "User",
             required: true
+        },
+        razorpayOrderId: {
+            type: String,
+            required: true 
         },
         paymentStatus: {
             type: String,
