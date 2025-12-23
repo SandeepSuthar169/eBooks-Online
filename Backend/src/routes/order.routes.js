@@ -1,16 +1,12 @@
-import express from "express"
-import {
-    createOrde,
-    deleteOrder,
-    getUserOrder,
-    updateOrder
-} from "../controllers/order.comtrollers.js"
+// import express from "express"
+// import {
+//     craeteOrder,
+//     cancelOrder
+// } from "../controllers/order.controllers.js"
 
-const router = express()
+// const router = express()
 
-router.post("/createOrder/:bookId", createOrde)
-router.get("/userOrder/:bookId/:orderId",  getUserOrder)
-router.post("/updateOrder/:bookId/:orderId",  updateOrder)
-router.post("/deleteOrder/:orderId",  deleteOrder)
+// router.post("/createOrder/:bookId", craeteOrder)
+// router.post("/cancelOrder/:orderId",  cancelOrder)
 
-export default router
+// export default router

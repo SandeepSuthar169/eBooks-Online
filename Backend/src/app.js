@@ -4,9 +4,10 @@ import cookieparser from "cookie-parser"
 import booksRoute  from "./routes/book.routes.js"
 import authRoute from "./routes/auth.routes.js"
 import reviewRoute from "./routes/review.routes.js"
-import orderRoute from "./routes/order.routes.js"
+// import orderRoute from "./routes/order.routes.js"
 import bookMarkRoute from "./routes/bookMark.routes.js"
 import addressUserRoute from "./routes/address.routes.js"
+import userProfileRoute from "./routes/userProfile.routes.js"
 
 const app = express()
 
@@ -27,8 +28,9 @@ app.use(express.urlencoded(
 app.use("/api/v1/auth", authRoute)
 app.use("/api/v1/Books", booksRoute)
 app.use("/api/v1/review", reviewRoute)
-app.use("/api/v1/order", orderRoute)
+// app.use("/api/v1/order", orderRoute)
 app.use("/api/v1/bookMark", bookMarkRoute)
 app.use("/api/v1/address", addressUserRoute)
+app.use("/api/v1/profile", userProfileRoute)
 
 export default app
