@@ -49,36 +49,3 @@ npm run dev
 npm start
 ```
 
-## API Endpoints & Usage
-
-Authentication Routes (`/api/users`)
-| Method | Endpoint    | Description                |
-| :-------- | :------- | :------------------------- |
-| POST | `/register` | Register a new user |
-| POST | `/login` | Authenticate user & get token |
-| GET | `/profile` | Get user profile |
-| POST | `/verify` | Verify a user |
-
-Book Routes (`/api/books`)
-| Method | Endpoint    | Description                |
-| :-------- | :------- | :------------------------- |
-| POST | `/BookAdd` | Register new Book in DB	|
-| GET | `/:id` | Fectch Book Info |
-| POST | `/:id/status` | Update Book |
-| DELETE | `/:id/delete` | Delete Book |
-
-Book Routes (`/api/review`)
-| Method | Endpoint    | Description                |
-| :-------- | :------- | :------------------------- |
-| POST | `/BookId/addReview` | Add new Review in DB	|
-| GET | `/:BookId/bookReview` | Fectch Review Info |
-| POST | `/:reviewId/deleteReview` | Delete Review |
-
-
-Book Routes (`/api/order`)
-| Method | Endpoint    | Description                |
-| :-------- | :------- | :------------------------- |
-| POST | `/createOrder/:bookId` | Add new Order in DB	|
-| GET | `/userOrder/:bookId/:orderId` | Fectch Order Info |
-| POST | `/updateOrder/:bookId/:orderId` | Update Order |
-| POST | `/deleteOrder/:orderId` | Delete Order |
