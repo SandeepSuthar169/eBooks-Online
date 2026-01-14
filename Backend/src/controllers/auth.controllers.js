@@ -12,11 +12,6 @@ const registerUser = asyncHandler(async (req, res) => {
         //1. get user details from fronted
 
         const {username, email, password}  = req.body
-        // console.log("username:", username, "email:", email);
-
-        // console.log(req.body);
-        
-        //2. validation- not empty
         if(
             [email, username, password].some((field) => 
                 field?.trim() === "")
@@ -26,8 +21,8 @@ const registerUser = asyncHandler(async (req, res) => {
 
         //3. check if user already exists: username, email
         const existedUser = await User.findOne({
-            $or: [{ username }, { email }] // this is mongodb aggregarion pipeline for find user base on email and username
-
+            $or: [{ username }, { email }]
+            
         })
 
         if(existedUser){

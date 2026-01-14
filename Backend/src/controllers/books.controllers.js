@@ -3,7 +3,7 @@ import { ApiError } from "../utils/apiError.js"
 import { asyncHandler} from "../utils/asyncHandler.js"
 import { ApiResponse }  from "../utils/apiResponse.js"
 import { BooksStatusEnum } from "../utils/constants.js"
-
+import redis from "../utils/redis.js"
 
 
 const addBook =  asyncHandler(async (req, res) => {
@@ -57,6 +57,14 @@ const getBookInfo =  asyncHandler(async (req, res) => {
     if(!id){ 
         throw new ApiError(404, "book id is not found") 
     } 
+
+    const bookInfoInCach = await redis.get(`book:${id}`)
+
+    if(bookInfoInCach) return res.status(200).json(new ApiResponse(
+        200,
+        JSON.params(bookInfoInCach),
+        "get book cached info successfully"
+    ))
     
     const  book  = await Books.findById(id).populate("name autharName price stock publishDate ISBN averageRating")
     
