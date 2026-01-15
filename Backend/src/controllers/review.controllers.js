@@ -6,7 +6,7 @@ import { ApiResponse }  from "../utils/apiResponse.js"
 import { asyncHandler} from "../utils/asyncHandler.js"
 import { ReviewRatingEnum } from "../utils/constants.js"
 import mongoose, { Mongoose } from "mongoose"
-
+// import redis from "../utils/redis.js"
 
 const addReview = asyncHandler( async (req, res) => {
     const { rating, comment} = req.body
@@ -60,9 +60,21 @@ const getBookReview = asyncHandler( async (req, res) => {
     
     if(!BookId) throw new ApiError(401, "book id is required")
 
+    //// const reviewBookInCach = await redis.get(`bookReview:${BookId}`)
+
+    // if(reviewBookInCach) {
+    //     return res.status(200).json(new ApiResponse(
+    //         200,
+    //         JSON.params(reviewBookInCach),
+    //         "get review Bookcached info successfully"
+    //     ))
+    // }
+
     const book = await Books.findById(BookId).select("name autharName averageRating totalReviews")
 
     if(!book) throw new ApiError(401, "id is required")
+
+
 
     const review = await Review.aggregate([
         {
@@ -99,7 +111,14 @@ const getBookReview = asyncHandler( async (req, res) => {
     ])
     if(!review) throw new ApiError(401, "id is required")
 
-
+    // await redis.set(
+    //     `bookReview:${BookId}`,
+    //     JSON.stringify(BookId),
+    //     {
+    //         EX:3600
+    //     }
+    // )
+    
     return res.status(200).json(
         new ApiResponse(
             200,
@@ -120,6 +139,8 @@ const deleteReview = asyncHandler( async (req, res) => {
 
     const deleteReview = await Review.findByIdAndDelete(reviewId)
     if(!deleteReview) throw new ApiError(401, "deleteReview is required")
+
+    // await redis.del(`bookReview:${BookId}`)
 
 
     return res.status(200).json(new ApiResponse(

@@ -3,7 +3,7 @@ import { ApiError } from "../utils/apiError.js"
 import { asyncHandler} from "../utils/asyncHandler.js"
 import { ApiResponse }  from "../utils/apiResponse.js"
 import { BooksStatusEnum } from "../utils/constants.js"
-import redis from "../utils/redis.js"
+import  redis  from "../utils/redis.js"
 
 
 const addBook =  asyncHandler(async (req, res) => {
@@ -50,7 +50,7 @@ const getBookInfo =  asyncHandler(async (req, res) => {
 
 
     // console.log(req.params);
-    const { id } = await req.params
+    const { id } =  req.params
 
     // console.log(id);
     
@@ -60,10 +60,12 @@ const getBookInfo =  asyncHandler(async (req, res) => {
 
     const bookInfoInCach = await redis.get(`book:${id}`)
 
+    console.log(bookInfoInCach);
+    
     if(bookInfoInCach) {
         return res.status(200).json(new ApiResponse(
             200,
-            JSON.params(bookInfoInCach),
+            JSON.parse(bookInfoInCach),
             "get book cached info successfully"
         ))
     }
@@ -127,7 +129,7 @@ const updateBook =  asyncHandler(async (req, res) => {
     
     await redis.set(
         `book:${id}`,
-        JSON.stringify(updateBook),
+        JSON.stringify(UpdateBooksValue),
         {
             EX: 3600
         }
@@ -135,9 +137,7 @@ const updateBook =  asyncHandler(async (req, res) => {
 
     return res.status(200).json(new ApiResponse(
         200,
-        {
             UpdateBooksValue,
-        },
         "Update book successfully!"
     ))
 })

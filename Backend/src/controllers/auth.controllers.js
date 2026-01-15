@@ -36,7 +36,7 @@ const registerUser = asyncHandler(async (req, res) => {
             password,
             username: username
         })
-        // console.log(fullName, email, password, username);
+        console.log(email, password, username);
         
         if(!user){
             throw new ApiError(404, "User is required!")
