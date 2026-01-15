@@ -8,9 +8,7 @@ const redis = new Redis({
 
 redis.on("connect", () => {
     console.log("connected to redis");
-    
 })
-
 
 redis.on("error", (err) => {
     console.log("failed to connection error:" , err);    

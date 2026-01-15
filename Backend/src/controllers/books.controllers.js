@@ -60,17 +60,27 @@ const getBookInfo =  asyncHandler(async (req, res) => {
 
     const bookInfoInCach = await redis.get(`book:${id}`)
 
-    if(bookInfoInCach) return res.status(200).json(new ApiResponse(
-        200,
-        JSON.params(bookInfoInCach),
-        "get book cached info successfully"
-    ))
+    if(bookInfoInCach) {
+        return res.status(200).json(new ApiResponse(
+            200,
+            JSON.params(bookInfoInCach),
+            "get book cached info successfully"
+        ))
+    }
     
     const  book  = await Books.findById(id).populate("name autharName price stock publishDate ISBN averageRating")
     
     if(!book){ 
         throw new ApiError(404, "book is not found") 
     } 
+
+    await redis.set(
+        `book:${id}`, 
+        JSON.stringify(book),
+        {
+            EX: 3600
+        }
+    )
     //3. return success
     return res.status(201).json(new ApiResponse(
         200,
@@ -114,7 +124,14 @@ const updateBook =  asyncHandler(async (req, res) => {
     if(!UpdateBooksValue) throw new ApiError(401, "book not update")
 
     // console.log(UpdateBooksValue);
-        
+    
+    await redis.set(
+        `book:${id}`,
+        JSON.stringify(updateBook),
+        {
+            EX: 3600
+        }
+    )
 
     return res.status(200).json(new ApiResponse(
         200,
@@ -134,6 +151,8 @@ const deleteBook =  asyncHandler(async (req, res) => {
     const deleteBook = await Books.findByIdAndDelete(id)
 
     if(!deleteBook) throw new ApiError(401, "book not update")
+
+    await redis.del(`book:${id}`)
 
     return res.status(200).json(new ApiResponse(
         200,
