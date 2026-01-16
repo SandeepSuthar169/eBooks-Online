@@ -10,6 +10,6 @@ const router = Router()
 
 router.post("/:BookId/addReview", verifyJWT, addReview)
 router.get("/:BookId/bookReview", getBookReview)
-router.post("/:reviewId/deleteReview", deleteReview)
+router.delete("/:reviewId/deleteReview", deleteReview)
 
 export default router

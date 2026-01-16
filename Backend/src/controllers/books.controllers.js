@@ -60,7 +60,7 @@ const getBookInfo =  asyncHandler(async (req, res) => {
 
     const bookInfoInCach = await redis.get(`book:${id}`)
 
-    console.log(bookInfoInCach);
+    // console.log(bookInfoInCach);
     
     if(bookInfoInCach) {
         return res.status(200).json(new ApiResponse(
@@ -77,12 +77,12 @@ const getBookInfo =  asyncHandler(async (req, res) => {
     } 
 
     await redis.set(
-        `book:${id}`, 
+        `book:${id}`,
         JSON.stringify(book),
-        {
-            EX: 3600
-        }
-    )
+        "EX",
+        3600
+      )
+      
     //3. return success
     return res.status(201).json(new ApiResponse(
         200,
@@ -100,10 +100,12 @@ const updateBook =  asyncHandler(async (req, res) => {
 
     if(!id) throw new ApiError(401, "book id not found")
     
-    const {price, name, stock, averageRating, totalReviews, status} = req.body
+    const {price, name, stock, averageRating, status} = req.body
+    console.log();
+    
     
 
-    if(price === undefined ||name === undefined||  stock === undefined || averageRating === undefined || totalReviews === undefined || status === undefined) throw new ApiError(401, "All book fileds are required")
+    if(price === undefined ||name === undefined||  stock === undefined || averageRating === undefined ||  status === undefined) throw new ApiError(401, "All book fileds are required")
     
 
 
@@ -118,7 +120,6 @@ const updateBook =  asyncHandler(async (req, res) => {
             price,
             stock,
             averageRating,
-            totalReviews,
             status
         },
         { new: true, runValidators: true }
@@ -130,10 +131,10 @@ const updateBook =  asyncHandler(async (req, res) => {
     await redis.set(
         `book:${id}`,
         JSON.stringify(UpdateBooksValue),
-        {
-            EX: 3600
-        }
-    )
+        "EX",
+        3600
+      )
+      
 
     return res.status(200).json(new ApiResponse(
         200,
