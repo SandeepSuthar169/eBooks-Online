@@ -2,6 +2,7 @@ import mongoose, { Schema } from "mongoose";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
+import { type } from "os";
 
 const userSchema = new Schema(
     {
@@ -22,6 +23,12 @@ const userSchema = new Schema(
             password: {
                 type: String,
                 required: true
+            },
+            resetOtp: {
+                type: String,
+            },
+            otpExpiry: {
+                type:Date
             },
             isEmailVerified: {
                 type: Boolean,

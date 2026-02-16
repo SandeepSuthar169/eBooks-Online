@@ -5,8 +5,10 @@ import { ApiError } from "../utils/apiError.js"
 import { ApiResponse } from "../utils/apiResponse.js"
 import { asyncHandler } from "../utils/asyncHandler.js"
 import { verifyJWT } from "../middlewares/auth.middleware.js"
-
-
+import  handleVerifyOtpAndResetPassword from "../utils/otpPasswordVerify.js"
+import crypto from "crypto"
+import  sendVerificationEmail   from "../utils/mail.js"
+import sendOtpEmail from "../utils/sendOtpEmail.js"
 
 const registerUser = asyncHandler(async (req, res) => {
         //1. get user details from fronted
@@ -163,14 +165,14 @@ const loginUser = asyncHandler(async (req, res) => {
 const logoutUser = asyncHandler(async (req, res) => {
 
     // console.log("req <====> ",req);
-    console.log("req.user <+++++>",req.user);
-    console.log("req.user._id  <=======>",req.user._id);
+    // console.log("req.user <+++++>",req.user);
+    // console.log("req.user._id  <=======>",req.user._id);
     
     await User.findByIdAndUpdate(
         req.user._id,
         {
             $set: {
-                refreshToken: undefined,
+                refreshToken: 1,
                 // accessToken: undefined
             }
         },
@@ -181,7 +183,7 @@ const logoutUser = asyncHandler(async (req, res) => {
 
     const cookieoption = {
         httpOnly: true,
-        secure: true
+        secure: true,
     }
 
     return res.status(200)
@@ -198,9 +200,103 @@ const logoutUser = asyncHandler(async (req, res) => {
 
 })
 
+const sendOtp = asyncHandler(async (req, res) => { 
+    const {email} = req.body
+
+    // FIXED: Validate email
+    if(!email) {
+        throw new ApiError(400, "Email is required")
+    }
+
+    // FIXED: Generate 5-digit OTP correctly
+    const otp = String(crypto.randomInt(10000, 100000)) 
+    
+    const user = await User.findOne({email})
+
+    if(!user) {
+        throw new ApiError(404, "User not found") 
+    }
+
+    // Set OTP and expiry
+    user.resetOtp = otp
+    user.otpExpiry = Date.now() + 5 * 60 * 1000  // 5 minutes expiry
+    await user.save({ validateBeforeSave: false })
+
+    const emailSent = await sendOtpEmail(email, otp)
+
+    if(!emailSent) {
+        throw new ApiError(500, "Failed to send OTP email")
+    }
+
+    return res.status(200).json( 
+        new ApiResponse(
+            200,
+            { email },
+            "OTP sent to your email successfully"
+        )
+    )
+})
+
+
+const verifyOtpAndResetPassword = asyncHandler(async (req, res) => {
+    const { email, otp, newPassword, confirmNewPassword } = req.body
+
+    // Validate inputs
+    if(!email || !otp || !newPassword || !confirmNewPassword) {
+        throw new ApiError(400, "All fields are required")
+    }
+
+    const user = await User.findOne({ email })
+
+    if (!user) {
+        throw new ApiError(404, "User not found")
+    }
+
+    if(!user.resetOtp || !user.otpExpiry) {
+        throw new ApiError(400, "No OTP request found. Please request a new OTP")
+    }
+
+    if (Date.now() > user.otpExpiry) {
+        user.resetOtp = undefined
+        user.otpExpiry = undefined
+        await user.save({ validateBeforeSave: false })
+        
+        throw new ApiError(400, "OTP has expired. Please request a new one")
+    }
+
+    // Check if OTP is correct
+    if (user.resetOtp !== otp) {
+        throw new ApiError(400, "Incorrect OTP")
+    }
+    
+    // Check if passwords match
+    if (newPassword !== confirmNewPassword) {
+        throw new ApiError(400, "Passwords do not match")
+    }
+
+    // Validate password strength (optional but recommended)
+    if(newPassword.length < 6) {
+        throw new ApiError(400, "Password must be at least 6 characters long")
+    }
+
+    // Update password and clear OTP
+    user.password = newPassword
+    user.resetOtp = undefined
+    user.otpExpiry = undefined
+    await user.save() 
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            {},
+            "Password reset successfully. You can now login with your new password"
+        )
+    )
+})
 
 export {
     registerUser,
     loginUser,
-    logoutUser
+    logoutUser,
+    sendOtp,
+    verifyOtpAndResetPassword
 }
