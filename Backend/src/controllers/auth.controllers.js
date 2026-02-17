@@ -7,7 +7,6 @@ import { asyncHandler } from "../utils/asyncHandler.js"
 import { verifyJWT } from "../middlewares/auth.middleware.js"
 import  handleVerifyOtpAndResetPassword from "../utils/otpPasswordVerify.js"
 import crypto from "crypto"
-import  sendVerificationEmail   from "../utils/mail.js"
 import sendOtpEmail from "../utils/sendOtpEmail.js"
 
 const registerUser = asyncHandler(async (req, res) => {

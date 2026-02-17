@@ -12,10 +12,16 @@ import userProfileRoute from "./routes/userProfile.routes.js"
 const app = express()
 
 app.use(cors({
-    origin: process.env.BASE_URL,
+    origin: "http://localhost:5173/",
     credentials: true,
-    methods: ["GET", "POST", "DELETE", "OPTIONS"],
-    allowedHeaders: ['Content-Type', "Authorization"]
+    methods: ["GET", "POST", "DELETE", "PUT", "OPTIONS"],
+    allowedHeaders: [
+        'Content-Type', 
+        "Authorization",
+        "Cache-Control",
+        "Exprires",
+        "Pragma"
+    ],
 })),
 app.use(express.json())
 app.use((cookieparser()))
