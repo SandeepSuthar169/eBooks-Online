@@ -3,9 +3,8 @@ import { loginFormControls } from "@/config";
 import { loginUser } from "@/store/auth-slice";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
+import { data, Link } from "react-router-dom";
 import { toast } from "sonner";
-// import { toast } from "sonner"
 
 
 
@@ -28,6 +27,9 @@ function AuthLogin() {
         toast.error("You do something wrong")
       }
     });
+    console.log(formData);
+    // console.log(data);
+    
   }
 
   return (

@@ -1,5 +1,6 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit"
 import axios from "axios"
+import { handler } from "tailwindcss-animate";
 
 const initialState = {
   isAuthenticated: false,
@@ -41,6 +42,25 @@ export const loginUser = createAsyncThunk(
   );
 
 
+export const checkMe = createAsyncThunk(
+    "/auth/checkMe",
+  
+    async () => {
+      const response = await axios.get(
+        "http://localhost:3001/api/v1/auth/checkMe",
+        {
+          withCredentials: true,
+          handler: {
+            "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate"
+          }
+        }
+      );
+  
+      return response.data;
+    }
+  );
+
+
 const authSlice = createSlice({
     name: "auth",
     initialState,
@@ -48,6 +68,7 @@ const authSlice = createSlice({
       setUser: (state, action) => {},
     },
     extraReducers: (builder) => {
+      // register part
         builder
           .addCase(registerUser.pending, (state) => {
             state.isLoading = true;
@@ -62,6 +83,38 @@ const authSlice = createSlice({
             state.user = null;
             state.isAuthenticated = false;
         })
+        // login part 
+        .addCase(loginUser.pending, (state) => {
+          state.isLoading = true;
+      })
+        .addCase(loginUser.fulfilled, (state, action) => {
+          console.log(action);
+          
+          state.isLoading = false;
+          state.user = action.payload.success ? action.payload.user: null 
+          state.isAuthenticated = action.payload.success;
+      })
+        .addCase(loginUser.rejected, (state, action) => {
+          state.isLoading = false;
+          state.user = null;
+          state.isAuthenticated = false;
+      })
+      // check me 
+      .addCase(checkMe.pending, (state) => {
+        state.isLoading = true;
+    })
+      .addCase(checkMe.fulfilled, (state, action) => {
+        
+        state.isLoading = false;
+        state.user = action.payload.success ? action.payload.user: null 
+        state.isAuthenticated = action.payload.success;
+    })
+      .addCase(checkMe.rejected, (state, action) => {
+        state.isLoading = false;
+        state.user = null;
+        state.isAuthenticated = false;
+    })
+
     }
 })
 

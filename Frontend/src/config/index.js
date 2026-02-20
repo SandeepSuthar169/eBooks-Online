@@ -1,3 +1,4 @@
+
 export const registerFormControls = [
     {
       name: "username",
@@ -222,3 +223,4 @@ export const registerFormControls = [
       placeholder: "Enter any additional notes",
     },
   ];
+
