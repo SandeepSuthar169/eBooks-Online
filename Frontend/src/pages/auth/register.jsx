@@ -1,8 +1,12 @@
 import CommonForm from '@/components/common/form'
 import { registerFormControls } from '@/config'
+import { registerUser } from '@/store/auth-slice';
 import { User } from 'lucide-react';
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useDispatch } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom'
+import { toast } from "sonner"
+
 
 const initialState = {
   username: "",
@@ -13,12 +17,26 @@ const initialState = {
 
 function AuthRegister() {
 
-  const [formData, setFormData] = useState(true)
+  const [formData, setFormData] = useState(initialState)
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
 
-  function onSummit(){
+  function onSummit(event){
+    event.preventDefault()
 
+    dispatch(registerUser(formData)).then((data) => {
+      if(data?.payload?.success) {
+        toast.success("User Register successfully")
+        navigate('/auth/login')
+      } else {
+        toast.error("You do something wrong")
+      }
+      
+        
+
+    } )
   }
-
+  
 
   return (
     <div className='mx-auto w-full max-w-md space-y-6' >
