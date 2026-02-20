@@ -10,58 +10,53 @@ import crypto from "crypto"
 import sendOtpEmail from "../utils/sendOtpEmail.js"
 
 const registerUser = asyncHandler(async (req, res) => {
-        //1. get user details from fronted
 
-        const {username, email, password}  = req.body
-        if(
-            [email, username, password].some((field) => 
-                field?.trim() === "")
-        ){
-            throw new ApiError(404, "All filed are required")
-        }
+    const {username, email, password}  = req.body
+    console.log(username, email, password);
+    
+    if(
+        [email, username, password].some((field) => 
+            field?.trim() === "")
+    ){
+        throw new ApiError(404, "All filed are required")
+    }
 
-        //3. check if user already exists: username, email
-        const existedUser = await User.findOne({
-            $or: [{ username }, { email }]
-            
-        })
-
-        if(existedUser){
-            throw new ApiError(409, "User already exists")
-        }
-
+    const existedUser = await User.findOne({
+        $or: [{ username }, { email }]
         
-        // create user object - create entry in db
-       const user = await User.create({
-            email,
-            password,
-            username: username
-        })
-        console.log(email, password, username);
-        
-        if(!user){
-            throw new ApiError(404, "User is required!")
-        }
+    })
 
-        // remove password and refresh token field form response
-        const createdUser = await User.findById(user._id).select(
-            "-password -refreshToken"
+    if(existedUser){
+        throw new ApiError(409, "User already exists")
+    }
+
+    
+   const user = await User.create({
+        email,
+        password,
+        username: username
+    })
+    console.log(email, password, username);
+    
+    if(!user){
+        throw new ApiError(404, "User is required!")
+    }
+
+    const createdUser = await User.findById(user._id).select(
+        "-password -refreshToken"
+    )
+    
+    if(!createdUser){
+        throw new ApiError(404, "createdUser is required")
+    }
+
+    
+    return res.status(201).json(
+        new ApiResponse(201, 
+            createdUser,
+            "User registered successfully!"
         )
-        
-        // check for user creation
-        if(!createdUser){
-            throw new ApiError(404, "createdUser is required")
-        }
-
-        // console.log(createdUser);
-        
-        // return res
-        return res.status(201).json(
-            new ApiResponse(201, 
-                createdUser,
-                "User registered successfully!"
-            )
-        )
+    )
 
 })
 

@@ -1,18 +1,20 @@
-import express from "express"
-import cors from "cors"
-import cookieparser from "cookie-parser"
+
 import booksRoute  from "./routes/book.routes.js"
-import authRoute from "./routes/auth.routes.js"
 import reviewRoute from "./routes/review.routes.js"
 // import orderRoute from "./routes/order.routes.js"
 import bookMarkRoute from "./routes/bookMark.routes.js"
 import addressUserRoute from "./routes/address.routes.js"
 import userProfileRoute from "./routes/userProfile.routes.js"
+import express from "express"
+import cors from "cors"
+import cookieparser from "cookie-parser"
+import authRoute from "./routes/auth.routes.js"
+import { User } from "./models/user.model.js"
 
 const app = express()
 
 app.use(cors({
-    origin: "http://localhost:5173/",
+    origin: "http://localhost:5173",
     credentials: true,
     methods: ["GET", "POST", "DELETE", "PUT", "OPTIONS"],
     allowedHeaders: [

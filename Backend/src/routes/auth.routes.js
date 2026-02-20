@@ -11,7 +11,7 @@ import { verifyJWT } from "../middlewares/auth.middleware.js"
 const router = Router()
 
 
-router.post("/register", registerUser)
+router.post("/register",  registerUser)
 router.post("/login", loginUser)
 router.post("/forgot-password", sendOtp)
 router.post("/reset-password", verifyOtpAndResetPassword)

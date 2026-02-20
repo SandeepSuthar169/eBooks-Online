@@ -6,7 +6,7 @@ import { type } from "os";
 
 const userSchema = new Schema(
     {
-            username: {
+        username: {
                 type: String,
                 required: true,
                 unique: true,
