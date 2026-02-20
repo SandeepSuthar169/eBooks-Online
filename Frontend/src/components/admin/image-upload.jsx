@@ -31,7 +31,7 @@ function ProductImageUpload({
             />
             {
                 !imageFile ? 
-                <Label htmlFor="image-upload" className="flex flex-col jus"></Label> : <div></div>
+                <Label htmlFor="image-upload" className="flex flex-col jus 3:32:14"></Label> : <div></div>
             }
         </div>
     </div>
