@@ -4,7 +4,8 @@ import {
     loginUser, 
     logoutUser, 
     sendOtp, 
-    verifyOtpAndResetPassword 
+    verifyOtpAndResetPassword,
+    checkMe
 } from "../controllers/auth.controllers.js"
 import { verifyJWT } from "../middlewares/auth.middleware.js"
 
@@ -16,5 +17,6 @@ router.post("/login", loginUser)
 router.post("/forgot-password", sendOtp)
 router.post("/reset-password", verifyOtpAndResetPassword)
 router.post("/logout",verifyJWT,  logoutUser )
+router.get("/checkMe",verifyJWT,  checkMe)
 
 export default router

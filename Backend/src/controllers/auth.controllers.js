@@ -287,10 +287,34 @@ const verifyOtpAndResetPassword = asyncHandler(async (req, res) => {
     )
 })
 
+const checkMe = async (req, res) => {
+    try {
+        const user =  await req.user
+        console.log(user);
+        
+        if(!user){
+            return res.status(400).json({
+                success: false,
+                message: "User not found"
+            })
+        }
+        
+        res.status(200).json({
+            success: true,
+            user
+        })
+ 
+    } catch (error) {
+        console.log("Error is get me", error);
+        
+    }
+}
+
 export {
     registerUser,
     loginUser,
     logoutUser,
     sendOtp,
-    verifyOtpAndResetPassword
+    verifyOtpAndResetPassword,
+    checkMe
 }
