@@ -4,6 +4,36 @@ import { asyncHandler} from "../utils/asyncHandler.js"
 import { ApiResponse }  from "../utils/apiResponse.js"
 import { BooksStatusEnum } from "../utils/constants.js"
 import  redis  from "../utils/redis.js"
+import { imageUpload } from "../utils/cloudinary.js"
+
+const imageUploadUtils = asyncHandler(async (req, res) => {
+   try {
+    console.log("req.file →", req.file)
+    console.log("req.body →", req.body)
+    
+    const b64 = Buffer.from(req.file.buffer).toString("base64")
+    if(!b64) throw new ApiError(404, "b64 is not working")
+
+    const url = "data:" + req.file.mimetype + ";base64," + b64;
+    if(!url) throw new ApiError(404, "url is not working")
+
+    const result = await imageUpload(url)
+    if(!result) throw new ApiError(404, "result is not working")
+
+   } catch (error) {
+        console.log(error);
+        res.status(500).json(
+            new ApiError(
+                500,
+                "Error Ocured"
+            )
+          );
+   }
+   
+
+    
+})
+
 
 
 const addBook =  asyncHandler(async (req, res) => {
@@ -70,7 +100,7 @@ const getBookInfo =  asyncHandler(async (req, res) => {
         ))
     }
     
-    const  book  = await Books.findById(id).populate("name autharName price stock publishDate ISBN averageRating")
+    const book = await Books.findById(id).select("name autharName price stock publishDate ISBN averageRating")
     
     if(!book){ 
         throw new ApiError(404, "book is not found") 
@@ -96,7 +126,7 @@ const getBookInfo =  asyncHandler(async (req, res) => {
 
 
 const updateBook =  asyncHandler(async (req, res) => {
-    const { id } = await req.params
+    const { id } =  req.params
 
     if(!id) throw new ApiError(401, "book id not found")
     
@@ -172,5 +202,6 @@ export {
     addBook,
     getBookInfo,
     updateBook,
-    deleteBook
+    deleteBook,
+    imageUploadUtils
 }

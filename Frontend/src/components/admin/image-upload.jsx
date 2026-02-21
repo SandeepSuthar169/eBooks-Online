@@ -1,15 +1,16 @@
 import { FileIcon, UploadCloud, UploadCloudIcon, XIcon } from 'lucide-react';
 import { Input } from '../ui/input'
 import { Label } from '../ui/label'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useRef } from 'react';
 import { Button } from '../ui/button';
+import axios from 'axios';
 
 function ProductImageUpload({
     imageFile, 
     setImageFile, 
     uploadedImageUrl, 
-    setUploadedImageUr
+    setUploadedImageUrl
 }) {
 
     const inputRef = useRef(null)
@@ -36,7 +37,24 @@ function ProductImageUpload({
         if (inputRef.current) {
           inputRef.current.value = "";
         }
-      }
+    }
+
+    async function uploadImageToCloudinary(){
+        const data = new FormData();
+        // console.log(data);
+        
+        data.append('my_file', imageFile)
+        const response = await axios.post("http://localhost:3001/api/v1/admin/Books/uploadImage", data)
+
+        console.log(response);
+        
+        if(response) setUploadedImageUrl(response.data)
+    }
+
+
+    useEffect(() => {
+        if(imageFile != null ) uploadImageToCloudinary();
+    },[imageFile])
 
   return (
     <div className='w-full max-w-md mx-auto mt-4'>
